@@ -20,6 +20,7 @@ It also downloads all new PDF files automatically to [Google Drive](https://driv
 ---
 
 ## Installation
+
 1. You will need to have [Python](https://www.python.org/downloads/) and [pip](https://pip.pypa.io/en/stable/installation/) installed (on Mac they are already installed)
 2. You will need to install the following packages with `pip`:
    go to `cmd` and type each of this line
@@ -33,7 +34,10 @@ It also downloads all new PDF files automatically to [Google Drive](https://driv
       python -m pip install google-auth
       python -m pip install pandas
       ```
-      
+3. download the code - https://github.com/arnaldo31/pmcpa_cases/archive/refs/heads/main.zip
+
+4. run the `main.py`
+   
 ## Workflow of Script
 1. Access [PMC PA ongoing cases](https://www.pmcpa.org.uk/cases/ongoing-cases/)  
 2. Scrape all new cases and store them in Google Sheets  
