@@ -1,21 +1,19 @@
 name: Build & Deploy Cloud Run Job
 
+# Allow manual triggers
 on:
-  push:
-    branches:
-      - main  # Trigger on pushes to main branch
+  workflow_dispatch:
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 1️⃣ Checkout the repo
+      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
       # 2️⃣ Authenticate with Google Cloud
-      - name: Authenticate to GCP
+      - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
@@ -24,18 +22,17 @@ jobs:
       - name: Set GCP project
         run: gcloud config set project crypto-messari
 
-      # 4️⃣ Build and push Docker image to Container Registry
+      # 4️⃣ Build Docker image
       - name: Build Docker image
         run: gcloud builds submit --tag gcr.io/crypto-messari/pmcpa-cloudrun-scraper
 
       # 5️⃣ Update Cloud Run Job with 2-hour timeout
       - name: Update Cloud Run Job
-        run: |
-          gcloud run jobs update pmcpa-cloudrun-scraper \
-            --image gcr.io/crypto-messari/pmcpa-cloudrun-scraper \
-            --task-timeout=7200s \
-            --region us-central1
+        run: gcloud run jobs update pmcpa-cloudrun-scraper \
+              --image gcr.io/crypto-messari/pmcpa-cloudrun-scraper \
+              --task-timeout=7200s \
+              --region us-central1
 
-      # 6️⃣ Optional: Execute Cloud Run Job
+      # 6️⃣ Execute Cloud Run Job
       - name: Execute Cloud Run Job
         run: gcloud run jobs execute pmcpa-cloudrun-scraper --region us-central1
