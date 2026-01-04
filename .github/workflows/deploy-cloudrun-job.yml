@@ -8,27 +8,27 @@ on:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      # 1. Checkout code
+      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Authenticate with Google Cloud
+      # 2️⃣ Authenticate with Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # 3. Set project
+      # 3️⃣ Set the GCP project
       - name: Set GCP project
         run: gcloud config set project crypto-messari
 
-      # 4. Build Docker image
+      # 4️⃣ Build & push Docker image (no log streaming issues)
       - name: Build Docker image
-        run: |
-          gcloud builds submit --tag gcr.io/crypto-messari/pmcpa-cloudrun-scraper
+        run: gcloud builds submit --tag gcr.io/crypto-messari/pmcpa-cloudrun-scraper --no-stream
 
-      # 5. Update Cloud Run Job with 2-hour timeout
+      # 5️⃣ Update Cloud Run Job with 2-hour timeout
       - name: Update Cloud Run Job
         run: |
           gcloud run jobs update pmcpa-cloudrun-scraper \
@@ -36,7 +36,6 @@ jobs:
             --task-timeout=7200s \
             --region us-central1
 
-      # 6. Optionally, execute the job
+      # 6️⃣ Optionally execute the job
       - name: Execute Cloud Run Job
-        run: |
-          gcloud run jobs execute pmcpa-cloudrun-scraper --region us-central1
+        run: gcloud run jobs execute pmcpa-cloudrun-scraper --region us-central1
