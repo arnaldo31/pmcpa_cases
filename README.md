@@ -36,7 +36,7 @@ It also downloads all new PDF files automatically to [Google Drive](https://driv
       ```
 3. download the code - https://github.com/arnaldo31/pmcpa_cases/archive/refs/heads/main.zip
 
-4. run the `main.py`
+4. run the `my_scraper.py`
    
 ## Workflow of Script
 1. Access [PMC PA ongoing cases](https://www.pmcpa.org.uk/cases/ongoing-cases/)  
