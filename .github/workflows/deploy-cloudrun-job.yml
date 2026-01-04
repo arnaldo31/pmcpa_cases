@@ -1,38 +1,49 @@
 name: Build & Deploy Cloud Run Job
 
-# Allow manual triggers
+# Allow manual trigger or push to main
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Checkout code
+      # 1️⃣ Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Authenticate with Google Cloud
+      # 2️⃣ Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # 3️⃣ Set GCP project
+      # 3️⃣ Set project
       - name: Set GCP project
         run: gcloud config set project crypto-messari
 
-      # 4️⃣ Build Docker image
+      # 4️⃣ Build Docker image locally in runner (avoids streaming issues)
       - name: Build Docker image
-        run: gcloud builds submit --tag gcr.io/crypto-messari/pmcpa-cloudrun-scraper
+        run: |
+          docker build -t gcr.io/crypto-messari/pmcpa-cloudrun-scraper .
 
-      # 5️⃣ Update Cloud Run Job with 2-hour timeout
+      # 5️⃣ Push Docker image to Container Registry
+      - name: Push Docker image
+        run: |
+          docker push gcr.io/crypto-messari/pmcpa-cloudrun-scraper
+
+      # 6️⃣ Update Cloud Run Job with new image and 2-hour timeout
       - name: Update Cloud Run Job
-        run: gcloud run jobs update pmcpa-cloudrun-scraper \
-              --image gcr.io/crypto-messari/pmcpa-cloudrun-scraper \
-              --task-timeout=7200s \
-              --region us-central1
+        run: |
+          gcloud run jobs update pmcpa-cloudrun-scraper \
+            --image gcr.io/crypto-messari/pmcpa-cloudrun-scraper \
+            --task-timeout=7200s \
+            --region us-central1
 
-      # 6️⃣ Execute Cloud Run Job
+      # 7️⃣ Optionally execute the job
       - name: Execute Cloud Run Job
-        run: gcloud run jobs execute pmcpa-cloudrun-scraper --region us-central1
+        run: |
+          gcloud run jobs execute pmcpa-cloudrun-scraper --region us-central1
