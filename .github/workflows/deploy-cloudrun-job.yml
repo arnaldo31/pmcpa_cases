@@ -24,9 +24,9 @@ jobs:
       - name: Set GCP project
         run: gcloud config set project crypto-messari
 
-      # 4️⃣ Build & push Docker image (no log streaming issues)
+      # 4️⃣ Build & push Docker image
       - name: Build Docker image
-        run: gcloud builds submit --tag gcr.io/crypto-messari/pmcpa-cloudrun-scraper --no-stream
+        run: gcloud builds submit --tag gcr.io/crypto-messari/pmcpa-cloudrun-scraper
 
       # 5️⃣ Update Cloud Run Job with 2-hour timeout
       - name: Update Cloud Run Job
