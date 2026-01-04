@@ -6,7 +6,8 @@ It also downloads all new PDF files automatically to [Google Drive](https://driv
 ---
 
 ## Run Time of Script
-- 23:58 UTC
+- Every **Sunday at 11:00 PM GMT**
+
 
 ---
 
